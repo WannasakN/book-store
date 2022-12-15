@@ -1,9 +1,19 @@
 import Router from 'koa-router'
+import db from '../db'
 const router = new Router()
-router.get('/', async ctx =>{
-    ctx.body= [
-        {id:1, title:'Programming'},
-        {id:2, title:'Life Style'}
-    ]})
-    
+const findById = (id: number) => db('category').select('*').where({id})
+
+router
+  .get('/', async (ctx, next) => {            
+    ctx.body = await db('category').select('*').orderBy('id')
+  })
+  .get('/:id', async (ctx, next) => {
+    const id = parseInt(ctx.params.id)
+    const category = await findById(id).first()
+    if(!category){
+      ctx.response.status = 404
+      return
+    }
+    ctx.body = category
+})  
 export default router
