@@ -17,3 +17,12 @@ export const toLowerCamelCase = (input: string) : string => {
     }
     return result
   }
+  export const flattenId = (original: any, propName: string) : any => {
+    const result = {...original}
+    const nested = result[propName]
+    delete result[propName]
+    if(nested && nested.id){
+      result[`${propName}Id`] = nested.id
+    }
+    return result
+  }
