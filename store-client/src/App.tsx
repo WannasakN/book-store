@@ -2,13 +2,19 @@ import Category from "./model/category";
 import repo from "./repo"
 import BookDetail from "./components/bookdetail";
 import { useEffect, useState } from 'react'
+import Book from "./model/book";
 function App() {
+  const [bookList, setBookList] = useState<Book[]>([])
   const [categoryList, setCategoryList] = useState<Category[]>([])
-  const Book = {
-    id: 1, title: 'Harry Potter', price: 560 , stockAmount: 1,
-    category:{id: 1 , title: 'Fantasy'}
+  const [filter, setFilter] = useState<string>('')
+
+  const fetchBookList = async () => {
+    const result = await repo.books.getAll({categoryId: filter})
+    if (result) {
+      setBookList(result)
+    }
   }
-  
+
   const fetchCategoryList = async () => {
     const result = await repo.categories.getAll()
     if (result) {
@@ -16,19 +22,35 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    fetchCategoryList()
-  })
+  const onCreateBook = async (book: Partial<Book>) => {
+    await repo.books.create(book)
+    fetchBookList()
+  }
+
+  const onUpdateBook = async (book: Partial<Book>) => {
+    await repo.books.update(book)
+    fetchBookList()
+  }
+
+  const onDeleteBook = async (id: number) => {
+    await repo.books.delete(id)
+    fetchBookList()
+  }
 
   return (
     <div>
-    {categoryList.map(category => <p key=
-    {category.id}> ID : {category.id} Title : 
-    {category.title}</p>)}
-    <BookDetail {...Book} key={Book.id}/>
-  </div>
-  ) 
+      <div>
+          {categoryList.map(category => <option key={category.id} value={category.id}>{category.title}</option>)}
+      </div>
+      {bookList.map(book =>
+        <div key={book.id}>
+          <BookDetail {...book} />
+        </div>
+      )}
+    </div>
+  );
 }
+
 
 export default App;
 
