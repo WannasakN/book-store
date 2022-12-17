@@ -36,11 +36,21 @@ function App() {
     await repo.books.delete(id)
     fetchBookList()
   }
+  useEffect(() => {
+    fetchCategoryList()
+    fetchBookList()
+
+  },[filter])
+
 
   return (
     <div>
       <div>
+        <select onChange={e => setFilter(e.target.value)}>
+          <option value={''}>All</option>
           {categoryList.map(category => <option key={category.id} value={category.id}>{category.title}</option>)}
+        </select>
+        <hr />
       </div>
       {bookList.map(book =>
         <div key={book.id}>
