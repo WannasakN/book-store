@@ -15,6 +15,6 @@ app.use(koaBody())
 
 app.use(apiRouter.routes())
 
-app.listen(3306)
+app.listen(8000)
 
 loadFixtures(appConfig.clearDataBeforeLodingFixture)
